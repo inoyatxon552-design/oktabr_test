@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matematika — Interaktiv test</title>
+<style>
+:root {
+  --blue:#2563eb;
+  --dark:#102044;
+  --green:#15803d;
+  --red:#dc2626;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  color:var(--dark);
+  background:linear-gradient(135deg,#e8f2ff,#f5f3ff,#e5fbf4);
+  min-height:100vh;
+}
+.math-bg {
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:-1;
+}
+.math-bg span {
+  position:absolute;
+  color:#2563eb;
+  opacity:.09;
+  font-weight:800;
+  font-size:clamp(22px,4vw,48px);
+  animation:float 15s ease-in-out infinite alternate;
+}
+@keyframes float {
+  from {transform:translateY(0) rotate(-8deg)}
+  to {transform:translateY(-45px) rotate(10deg)}
+}
+header {
+  padding:27px 15px;
+  text-align:center;
+  color:white;
+  background:linear-gradient(120deg,#102b67,#2563eb,#673ab7);
+  box-shadow:0 5px 20px #142b5930;
+}
+header h1 {margin:0 0 8px;font-size:clamp(23px,4vw,34px)}
+header p {margin:0;color:#e0eaff}
+.container {max-width:1050px;margin:25px auto;padding:0 15px}
+.panel {
+  background:#ffffffed;
+  border:1px solid #dce6fa;
+  border-radius:18px;
+  padding:24px;
+  margin-bottom:20px;
+  box-shadow:0 8px 28px #18345c12;
+}
+h2 {margin-top:0;color:#193d80}
+label {display:block;font-weight:650;margin:12px 0 7px}
+input {
+  width:100%;
+  padding:13px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  font-size:16px;
+  background:white;
+}
+button {
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  background:var(--blue);
+  color:white;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+button:hover {filter:brightness(.92);transform:translateY(-1px)}
+button:disabled {opacity:.5;cursor:not-allowed}
+.btn-secondary {background:#475569}
+.btn-green {background:var(--green)}
+.btn-red {background:#b91c1c}
+.full {width:100%;margin-top:20px}
+.grid {display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#f5f8ffed;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #dce6fa;
+  margin-bottom:16px;
+}
+.timer {font-size:23px;font-weight:800;color:#b91c1c}
+.progress-bg {height:9px;background:#dbeafe;border-radius:20px;overflow:hidden;margin:10px 0 20px}
+.progress {height:100%;width:0;background:linear-gradient(90deg,#2563eb,#8b5cf6);transition:width .3s}
+.question {
+  padding:20px;
+  margin-bottom:15px;
+  border:1px solid #dbe5f5;
+  border-radius:14px;
+  background:white;
+}
+.q-title {font-weight:750;font-size:17px;line-height:1.6;margin-bottom:12px}
+.q-number {color:#2563eb;font-weight:800}
+.option {
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:11px;
+  border:1px solid #e2e8f0;
+  border-radius:9px;
+  margin:8px 0;
+  cursor:pointer;
+  font-weight:400;
+  line-height:1.5;
+}
+.option:hover {background:#eff6ff;border-color:#93c5fd}
+.option input {width:auto;margin-top:4px;flex-shrink:0}
+.option:has(input:checked) {background:#eff6ff;border-color:#2563eb}
+.small {font-size:13px;color:#64748b}
+.hide {display:none!important}
+.stat-grid {display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat {
+  background:#eff6ff;
+  padding:18px 8px;
+  border-radius:12px;
+  text-align:center;
+}
+.stat strong {display:block;font-size:27px;color:#1d4ed8}
+.stat span {font-size:13px}
+.table-wrap {overflow-x:auto}
+table {width:100%;border-collapse:collapse;min-width:650px}
+th,td {padding:12px;text-align:left;border-bottom:1px solid #e2e8f0}
+th {background:#eff6ff;color:#1e3a8a}
+tr:hover td {background:#f8fafc}
+footer {text-align:center;padding:25px;color:#64748b;font-size:13px}
+@media(max-width:600px) {
+ .grid,.stat-grid {grid-template-columns:1fr}
+ .panel {padding:16px}
+ .timer {font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="math-bg" id="mathBg"></div>
+
+<header>
+  <h1>∑ MATEMATIKA OLIMPIADASI ∑</h1>
+  <p>Oddiy kasrlar · Ko‘paytirish · O‘nli kasrlar</p>
+  <p style="margin-top:8px;font-size:13px">Bilimingizni sinang — natijangizni aniqlang!</p>
+</header>
+
+<div class="container">
+
+  <section class="panel" id="startPanel">
+    <h2>📘 Testga xush kelibsiz!</h2>
+    <p>Test 25 ta savoldan iborat. Har bir to‘g‘ri javob uchun 1 ball beriladi.</p>
+    <div class="grid">
+      <div>
+        <label for="firstName">Ism</label>
+        <input id="firstName" placeholder="Ismingizni kiriting" autocomplete="given-name">
+      </div>
+      <div>
+        <label for="lastName">Familiya</label>
+        <input id="lastName" placeholder="Familiyangizni kiriting" autocomplete="family-name">
+      </div>
+    </div>
+    <label for="className">Sinf</label>
+    <input id="className" placeholder="Masalan: 5-A" maxlength="15">
+    <div class="panel" style="background:#eff6ff;margin:20px 0 0;padding:16px;box-shadow:none">
+      <b>Test qoidalari:</b>
+      <ul>
+        <li>Jami savollar: 25 ta.</li>
+        <li>Ajratilgan vaqt: 40 daqiqa.</li>
+        <li>Har bir savolda bitta javob tanlang.</li>
+        <li>Vaqt tugaganda test avtomatik yakunlanadi.</li>
+        <li>Natijalar ushbu brauzerda saqlanadi.</li>
+      </ul>
+    </div>
+    <button class="full" onclick="startTest()">🚀 TESTNI BOSHLASH</button>
+  </section>
+
+  <section class="panel hide" id="testPanel">
+    <div class="topbar">
+      <div>
+        <b id="studentLabel">Ishtirokchi</b>
+        <div class="small" id="classLabel"></div>
+      </div>
+      <div class="timer">⏱ <span id="timer">40:00</span></div>
+    </div>
+    <div class="progress-bg"><div class="progress" id="progress"></div></div>
+    <p id="answeredInfo">Javoblangan: 0 / 25</p>
+    <div id="questions"></div>
+    <button class="full btn-green" onclick="finishTest(false)">✅ TESTNI YAKUNLASH</button>
+    <p class="small">Yakunlashdan oldin barcha savollarga javob berganingizni tekshiring.</p>
+  </section>
+
+  <section class="panel hide" id="resultPanel">
+    <h2>🏆 Test natijasi</h2>
+    <div id="resultMessage"></div>
+    <div class="stat-grid" style="margin:20px 0">
+      <div class="stat"><strong id="score">0/25</strong><span>To‘g‘ri javoblar</span></div>
+      <div class="stat"><strong id="percent">0%</strong><span>Natija</span></div>
+      <div class="stat"><strong id="wrong">0</strong><span>Xato yoki javobsiz</span></div>
+    </div>
+    <div id="resultDetails"></div>
+    <button onclick="location.reload()" class="full">🔄 Yangi test boshlash</button>
+    <button onclick="showResults()" class="full btn-secondary">📊 Barcha natijalarni ko‘rish</button>
+  </section>
+
+  <section class="panel" id="recordsPanel">
+    <h2>📊 Barcha qatnashchilar natijalari</h2>
+    <p class="small">Natijalar shu kompyuter va brauzerda saqlanadi.</p>
+    <button onclick="showResults()" class="btn-secondary">Natijalarni yangilash</button>
+    <button onclick="exportCSV()" class="btn-green">⬇ Excel uchun yuklab olish (CSV)</button>
+    <div class="table-wrap" style="margin-top:18px">
+      <table>
+        <thead>
+          <tr>
+            <th>№</th><th>Ism-familiya</th><th>Sinf</th>
+            <th>Ball</th><th>Foiz</th><th>Sana</th><th>Vaqt</th>
+          </tr>
+        </thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+    </div>
+    <p id="noRecords" class="small">Hozircha natijalar yo‘q.</p>
+    <button class="btn-red" style="margin-top:18px" onclick="clearResults()">Barcha natijalarni o‘chirish</button>
+  </section>
+</div>
+
+<footer>Matematika test platformasi · Bilim — kelajak poydevori</footer>
+
+<script>
+const questions = [
+ {q:"Hisoblang: 2/3 × 3/5 = ?",o:["2/5","5/8","6/8","1/5"],a:0},
+ {q:"Hisoblang: 4/7 × 14/15 = ?",o:["8/15","4/15","2/5","14/15"],a:0},
+ {q:"Hisoblang: 5/8 × 4/5 = ?",o:["1/2","4/13","5/8","2/5"],a:0},
+ {q:"Hisoblang: 3/4 × 2/9 = ?",o:["1/6","2/13","3/9","1/3"],a:0},
+ {q:"Hisoblang: 7/10 × 5/14 = ?",o:["1/4","1/2","5/24","7/20"],a:0},
+ {q:"Natural sonni kasrga ko‘paytiring: 6 × 2/7 = ?",o:["12/7","8/7","12/13","6/7"],a:0},
+ {q:"Hisoblang: 12 × 3/8 = ?",o:["4,5","3,5","4","5,5"],a:0},
+ {q:"Hisoblang: 15 × 2/5 = ?",o:["6","5","10","8"],a:0},
+ {q:"Hisoblang: 9 × 7/12 = ?",o:["5 1/4","4 1/4","5 1/2","6 1/4"],a:0},
+ {q:"Hisoblang: 24 × 5/6 = ?",o:["20","18","22","16"],a:0},
+ {q:"Oddiy kasrni o‘nli kasrga aylantiring: 1/2 = ?",o:["0,5","0,2","1,2","0,05"],a:0},
+ {q:"3/4 kasrining o‘nli ko‘rinishini toping.",o:["0,75","0,34","0,8","0,25"],a:0},
+ {q:"7/20 kasrini o‘nli kasrga aylantiring.",o:["0,35","0,7","0,27","0,25"],a:0},
+ {q:"9/25 kasrining o‘nli ko‘rinishi qaysi?",o:["0,36","0,25","0,9","0,45"],a:0},
+ {q:"11/10 kasrini o‘nli kasrga aylantiring.",o:["1,1","0,11","1,01","1,10"],a:0},
+ {q:"Pirogning 3/4 qismi 8 ta teng bo‘lakka teng miqdordagi pirogdan iborat. 8 ta bo‘lakning 3/4 qismi nechta bo‘lak bo‘ladi?",o:["6 ta","4 ta","5 ta","7 ta"],a:0},
+ {q:"12 metr lentaning 2/3 qismi ishlatildi. Necha metr lenta ishlatilgan?",o:["8 metr","6 metr","9 metr","4 metr"],a:0},
+ {q:"30 litr suvning 5/6 qismi idishga quyildi. Necha litr suv quyildi?",o:["25 litr","20 litr","24 litr","15 litr"],a:0},
+ {q:"Kitob 20 betdan iborat qisqa bo‘limga ega. O‘quvchi shu bo‘limning 3/5 qismini o‘qidi. U necha bet o‘qigan?",o:["12 bet","10 bet","15 bet","8 bet"],a:0},
+ {q:"21 ta konfetning 4/7 qismi tarqatildi. Nechta konfet tarqatilgan?",o:["12 ta","14 ta","7 ta","9 ta"],a:0},
+ {q:"Hisoblang: 2/5 × 3/4 = ?",o:["3/10","6/9","5/9","2/20"],a:0},
+ {q:"Hisoblang: 8 × 5/12 = ?",o:["3 1/3","2 1/3","4 1/3","3 1/2"],a:0},
+ {q:"13/20 kasrini o‘nli kasrga aylantiring.",o:["0,65","0,13","0,20","0,75"],a:0},
+ {q:"16 metr matoning 3/8 qismi tikuvchilikka sarflandi. Necha metr mato sarflandi?",o:["6 metr","8 metr","4 metr","9 metr"],a:0},
+ {q:"Hisoblang: 2/9 × 3/4 = ?",o:["1/6","5/13","2/12","1/4"],a:0}
+];
+
+// Matematik belgilar bilan fon
+const symbols = [
+ "π","∑","√x","a²+b²","x/y","½","¾","∞","%","÷",
+ "×","≠","∫","Δ","x²","3/5","7/8","α","β","0,75"
+];
+const bg = document.getElementById("mathBg");
+for(let i=0;i<30;i++){
+  const s=document.createElement("span");
+  s.textContent=symbols[i%symbols.length];
+  s.style.left=(i*37%97)+"%";
+  s.style.top=(i*29%95)+"%";
+  s.style.animationDelay=-(i%12)+"s";
+  s.style.animationDuration=(12+i%10)+"s";
+  bg.appendChild(s);
+}
+
+let currentStudent = null;
+let timeLeft = 40*60;
+let timerInterval = null;
+let finished = false;
+
+function startTest(){
+  const first=document.getElementById("firstName").value.trim();
+  const last=document.getElementById("lastName").value.trim();
+  const cls=document.getElementById("className").value.trim();
+
+  if(!first || !last || !cls){
+    alert("Iltimos, ism, familiya va sinfni to‘liq kiriting!");
+    return;
+  }
+
+  currentStudent={first,last,cls};
+  document.getElementById("studentLabel").textContent=first+" "+last;
+  document.getElementById("classLabel").textContent=cls+"-sinf";
+  document.getElementById("startPanel").classList.add("hide");
+  document.getElementById("recordsPanel").classList.add("hide");
+  document.getElementById("testPanel").classList.remove("hide");
+
+  renderQuestions();
+  updateProgress();
+  timerInterval=setInterval(tick,1000);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderQuestions(){
+  const holder=document.getElementById("questions");
+  holder.innerHTML="";
+
+  questions.forEach((q,i)=>{
+    const div=document.createElement("div");
+    div.className="question";
+
+    const title=document.createElement("div");
+    title.className="q-title";
+    title.innerHTML='<span class="q-number">'+(i+1)+'.</span> ';
+    title.appendChild(document.createTextNode(q.q));
+    div.appendChild(title);
+
+    q.o.forEach((opt,j)=>{
+      const label=document.createElement("label");
+      label.className="option";
+      const radio=document.createElement("input");
+      radio.type="radio";
+      radio.name="q"+i;
+      radio.value=j;
+      radio.addEventListener("change",updateProgress);
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(String.fromCharCode(65+j)+") "+opt));
+      div.appendChild(label);
+    });
+
+    holder.appendChild(div);
+  });
+}
+
+function updateProgress(){
+  const count=questions.filter((q,i)=>
+    document.querySelector('input[name="q'+i+'"]:checked')
+  ).length;
+  document.getElementById("answeredInfo").textContent=
+    "Javoblangan: "+count+" / "+questions.length;
+  document.getElementById("progress").style.width=
+    (count/questions.length*100)+"%";
+}
+
+function tick(){
+  if(finished)return;
+  timeLeft--;
+  const mins=Math.floor(timeLeft/60);
+  const secs=timeLeft%60;
+  document.getElementById("timer").textContent=
+    String(mins).padStart(2,"0")+":"+String(secs).padStart(2,"0");
+
+  if(timeLeft<=0){
+    clearInterval(timerInterval);
+    finishTest(true);
+  }
+}
+
+function getRecords(){
+  try {
+    return JSON.parse(localStorage.getItem("matematikaNatijalari")||"[]");
+  } catch(e) {
+    return [];
+  }
+}
+
+function finishTest(auto=false){
+  if(finished)return;
+
+  const answered=questions.filter((q,i)=>
+    document.querySelector('input[name="q'+i+'"]:checked')
+  ).length;
+
+  if(!auto && answered<questions.length){
+    if(!confirm("Siz "+(questions.length-answered)+
+      " ta savolga javob bermadingiz. Testni yakunlaysizmi?"))return;
+  }
+
+  finished=true;
+  clearInterval(timerInterval);
+
+  let correct=0;
+  let details="<h3>Javoblar tahlili</h3>";
+
+  questions.forEach((q,i)=>{
+    const selected=document.querySelector('input[name="q'+i+'"]:checked');
+    const value=selected?Number(selected.value):-1;
+    const ok=value===q.a;
+    if(ok)correct++;
+
+    details+='<div style="padding:12px;border-bottom:1px solid #e2e8f0">';
+    details+='<b>'+(i+1)+'. '+q.q+'</b><br>';
+    details+='<span style="color:'+(ok?'#15803d':'#dc2626')+'">';
+    details+=ok?'✓ To‘g‘ri':'✗ Noto‘g‘ri yoki javobsiz';
+    details+='</span><br>';
+    details+='<span class="small">To‘g‘ri javob: '+
+      q.o[q.a]+'</span></div>';
+  });
+
+  const percent=Math.round(correct/questions.length*100);
+  const now=new Date();
+  const date=now.toLocaleDateString("uz-UZ");
+  const duration=40*60-timeLeft;
+  const elapsed=Math.max(0,duration);
+  const usedTime=String(Math.floor(elapsed/60)).padStart(2,"0")+":"+
+    String(elapsed%60).padStart(2,"0");
+
+  const record={
+    first:currentStudent.first,
+    last:currentStudent.last,
+    cls:currentStudent.cls,
+    score:correct,
+    total:questions.length,
+    percent,
+    date,
+    usedTime,
+    timestamp:Date.now()
+  };
+
+  const records=getRecords();
+  records.push(record);
+
+  try {
+    localStorage.setItem("matematikaNatijalari",JSON.stringify(records));
+  } catch(e) {
+    alert("Natijalarni saqlab bo‘lmadi. Brauzer xotirasini tekshiring.");
+  }
+
+  document.getElementById("testPanel").classList.add("hide");
+  document.getElementById("resultPanel").classList.remove("hide");
+  document.getElementById("recordsPanel").classList.remove("hide");
+
+  document.getElementById("score").textContent=correct+"/25";
+  document.getElementById("percent").textContent=percent+"%";
+  document.getElementById("wrong").textContent=questions.length-correct;
+  document.getElementById("resultMessage").innerHTML=
+    "<p><b>"+escapeHTML(currentStudent.first+" "+currentStudent.last)+
+    "</b>, testingiz yakunlandi.</p><p>"+
+    (percent>=90?"Ajoyib natija! 🌟":
+     percent>=70?"Yaxshi natija! 👏":
+     percent>=50?"Yana mashq qiling! 💪":
+     "Ko‘proq mashq qilish tavsiya etiladi. 📘")+
+    (auto?"<br>⏰ Ajratilgan vaqt tugadi.":"")+"</p>";
+
+  document.getElementById("resultDetails").innerHTML=details;
+  showResults();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function escapeHTML(text){
+  return text.replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+
+function showResults(){
+  const records=getRecords();
+  const tbody=document.getElementById("recordsBody");
+  tbody.innerHTML="";
+  document.getElementById("noRecords").style.display=
+    records.length?"none":"block";
+
+  records.slice().reverse().forEach((r,i)=>{
+    const tr=document.createElement("tr");
+    const values=[
+      records.length-i,
+      r.first+" "+r.last,
+      r.cls,
+      r.score+"/"+r.total,
+      r.percent+"%",
+      r.date,
+      r.usedTime
+    ];
+    values.forEach(value=>{
+      const td=document.createElement("td");
+      td.textContent=value;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function exportCSV(){
+  const records=getRecords();
+  if(!records.length){
+    alert("Yuklab olish uchun natijalar mavjud emas.");
+    return;
+  }
+  const rows=[
+    ["Ism","Familiya","Sinf","Ball","Jami savol","Foiz","Sana","Sarflangan vaqt"],
+    ...records.map(r=>[
+      r.first,r.last,r.cls,r.score,r.total,r.percent+"%",r.date,r.usedTime
+    ])
+  ];
+  const csv="\uFEFF"+rows.map(row=>
+    row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")
+  ).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="matematika_natijalari.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearResults(){
+  if(!confirm("Barcha qatnashchilar natijalari butunlay o‘chirilsinmi?"))return;
+  localStorage.removeItem("matematikaNatijalari");
+  showResults();
+}
+
+showResults();
+</script>
+</body>
+</html>
